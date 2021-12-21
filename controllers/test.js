@@ -31,3 +31,20 @@ exports.postTest = async (req, res) => {
     res.send(e);
   }
 };
+
+exports.putTest = async (req, res) => {
+  try{
+    client.on('error', (err) => console.log('Redis Client Error', err));
+    await client.connect();
+    let result = await client.get(req.body.key) || '[]';
+    result = await JSON.parse(result);
+    req.body.value.forEach(element => {
+      result.push(element);
+    });
+    let update = await client.set(req.body.key, JSON.stringify(result));
+    res.send(update);
+    await client.disconnect();
+  }catch(e){
+    res.send(e);
+  }
+};
