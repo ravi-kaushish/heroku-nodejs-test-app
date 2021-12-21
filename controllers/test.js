@@ -12,7 +12,7 @@ exports.getTest = async (req, res) => {
   try{
     client.on('error', (err) => console.log('Redis Client Error', err));
     await client.connect();
-    let result = await client.get('key');
+    let result = await client.get(req.query.key);
     res.send(result);
     await client.disconnect();
   }catch(e){
@@ -22,10 +22,9 @@ exports.getTest = async (req, res) => {
 
 exports.postTest = async (req, res) => {
   try{
-    value = req.body;
     client.on('error', (err) => console.log('Redis Client Error', err));
     await client.connect();
-    let result = await client.set('key', JSON.stringify(value));
+    let result = await client.set(req.body.key, typeof(req.body.value) === "object" ? await JSON.stringify(req.body.value) : req.body.value);
     res.send(result);
     await client.disconnect();
   }catch(e){
